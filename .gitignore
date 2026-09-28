@@ -1,0 +1,75 @@
+# =========================
+# Python
+# =========================
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / Packaging
+*.egg
+*.egg-info/
+dist/
+build/
+
+# =========================
+# Environment Variables
+# =========================
+
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE / Editor
+# =========================
+
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# =========================
+# Testing / Coverage
+# =========================
+
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# =========================
+# Logs
+# =========================
+
+*.log
+
+# =========================
+# Jupyter Notebook
+# =========================
+
+.ipynb_checkpoints/
+
+# =========================
+# mypy
+# =========================
+
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# =========================
+# Ruff
+# =========================
+
+.ruff_cache/
