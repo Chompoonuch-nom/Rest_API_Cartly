@@ -5,10 +5,11 @@ Swagger UI (เอกสาร API อัตโนมัติ) จะอยู�
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from core.exceptions import register_exception_handlers
 from database import Base, engine
-from routers import auth, users, categories, products, cart, addresses, orders, reviews
+from routers import auth, users, categories, products, cart, addresses, orders, reviews, uploads
 
 Base.metadata.create_all(bind=engine)
 
@@ -36,6 +37,11 @@ app.include_router(cart.router)
 app.include_router(addresses.router)
 app.include_router(orders.router)
 app.include_router(reviews.router)
+app.include_router(uploads.router)
+
+# เสิร์ฟรูปที่อัปโหลดไว้ที่ /uploads/<ชื่อไฟล์> (สาธารณะ — ชื่อไฟล์สุ่ม เดาไม่ได้)
+app.mount("/uploads", StaticFiles(directory=uploads.UPLOAD_DIR), name="uploads")
+
 
 @app.get("/")
 def root():

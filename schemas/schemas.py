@@ -5,9 +5,10 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List, Generic, TypeVar
 
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
 
 T = TypeVar("T")
+
 
 # Common
 class ApiResponse(BaseModel, Generic[T]):
@@ -15,12 +16,14 @@ class ApiResponse(BaseModel, Generic[T]):
     message: str = "OK"
     data: Optional[T] = None
 
+
 class PageResponse(BaseModel, Generic[T]):
     content: List[T]
     page: int
     size: int
     total_elements: int
     total_pages: int
+
 
 # Auth / User
 class RegisterRequest(BaseModel):
@@ -31,9 +34,11 @@ class RegisterRequest(BaseModel):
     password_hash: str = Field(min_length=6)
     phone_number: Optional[str] = None
 
+
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
 
 class AuthResponse(BaseModel):
     token: str
@@ -43,6 +48,7 @@ class AuthResponse(BaseModel):
     last_name: str
     email: str
     user_role:str
+
 
 class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -57,11 +63,32 @@ class UserOut(BaseModel):
     user_role: str
     created_at: datetime
 
+
+class AvatarUpdate(BaseModel):
+    """ส่ง avatar_url เป็น null เพื่อลบรูปโปรไฟล์"""
+    avatar_url: Optional[str] = Field(default=None, max_length=500)
+
+    @field_validator("avatar_url")
+    @classmethod
+    def validate_avatar_url(cls, v):
+        if v is None:
+            return v
+        if not (v.startswith("/uploads/") or v.startswith("http://") or v.startswith("https://")):
+            raise ValueError("avatar_url ต้องเป็น URL (http/https) หรือ path ที่ได้จาก /api/uploads/images")
+        return v
+
+
+class UploadOut(BaseModel):
+    """ผลลัพธ์การอัปโหลดรูป — url เป็น path สัมพันธ์ เช่น /uploads/ab12.jpg (client ต่อกับ BASE_URL เอง)"""
+    url: str
+
+
 # Category
 class CategoryCreate(BaseModel):
     category_name: str
     category_descp: Optional[str] = None
     icon_url: Optional[str] = None
+
 
 class CategoryOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -71,10 +98,12 @@ class CategoryOut(BaseModel):
     category_descp: Optional[str] = None
     icon_url: Optional[str] = None
 
+
 # Product
 class ProductImageCreate(BaseModel):
     image_url: str
     is_primary: bool = False
+
 
 class ProductImageOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -83,6 +112,7 @@ class ProductImageOut(BaseModel):
     image_url: str
     is_primary: bool
 
+
 class ProductCreate(BaseModel):
     product_name: str
     product_descp: Optional[str] = None
@@ -90,6 +120,7 @@ class ProductCreate(BaseModel):
     stock_qty: int = Field(ge=0)
     category_id: Optional[int] = None
     images: List[ProductImageCreate] = []
+
 
 class ProductOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -103,6 +134,7 @@ class ProductOut(BaseModel):
     category_id: Optional[int] = None
     images: List[ProductImageOut] = []
 
+
 # Address
 class AddressCreate(BaseModel):
     label_type: Optional[str] = None
@@ -114,6 +146,7 @@ class AddressCreate(BaseModel):
     province: str
     postal_code: str
     is_default: bool = False
+
 
 class AddressOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -129,10 +162,12 @@ class AddressOut(BaseModel):
     postal_code: str
     is_default: bool
 
+
 # Cart
 class CartItemCreate(BaseModel):
     product_id: int
     quantity: int = Field(gt=0)
+
 
 class CartItemOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -141,16 +176,19 @@ class CartItemOut(BaseModel):
     product: ProductOut
     quantity: int
 
+
 class CartOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     cart_id: int
     items: List[CartItemOut] = []
 
+
 # Order
 class CheckoutRequest(BaseModel):
     address_id: int
     payment_method: str   # COD, CREDIT_CARD, PROMTPAY, TRUEMONEY
+
 
 class OrderItemOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -162,6 +200,7 @@ class OrderItemOut(BaseModel):
     quantity: int
     subtotal: Decimal
 
+
 class OrderOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -170,6 +209,7 @@ class OrderOut(BaseModel):
     total_amount: Decimal
     created_at: datetime
     items: List[OrderItemOut] = []
+
 
 # Review
 class ReviewCreate(BaseModel):

@@ -1,6 +1,6 @@
 """
 SQLAlchemy models - สอดคล้องกับ database/schema.sql
-ตาราง: users, addresses, categories, products, product_image, carts, cart_items, orders, order_items, payment, review
+ตาราง: users, addresses, categories, products, product_image, carts, cart_items, orders, order_items, payment, reviews
 """
 
 from datetime import datetime

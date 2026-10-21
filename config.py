@@ -6,6 +6,10 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440
 
+    # อัปโหลดรูปภาพ (โฟลเดอร์สัมพันธ์กับ root ของโปรเจกต์)
+    upload_dir: str = "uploads"
+    max_upload_mb: int = 5
+
     class Config:
         env_file = ".env"
 

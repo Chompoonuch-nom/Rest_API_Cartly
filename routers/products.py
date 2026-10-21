@@ -63,7 +63,7 @@ def create(payload: ProductCreate, db: Session = Depends(get_db), _admin=Depends
         db.add(product)
         db.flush() # ให้ได้ product_id ก่อน commit
 
-        for img in paylode.images:
+        for img in payload.images:
             db.add(ProductImage(product_id=product.product_id, image_url=img.image_url, is_primary=img.is_primary))
 
         db.commit()
